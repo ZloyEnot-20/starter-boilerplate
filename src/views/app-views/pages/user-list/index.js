@@ -9,6 +9,7 @@ import { connect } from "react-redux";
 
 import { fetchCustomers } from "redux/reducers/ActionCreators";
 import { customersSlice } from "redux/reducers/CustomersSlice";
+import Loading from "components/shared-components/Loading";
 
 export class UserList extends Component {
   state = {
@@ -118,16 +119,28 @@ export class UserList extends Component {
       },
     ];
     return (
-      <Card bodyStyle={{ padding: "0px" }}>
-        <Table columns={tableColumns} dataSource={customers} rowKey="id" />
-        <UserView
-          data={selectedUser}
-          visible={userProfileVisible}
-          close={() => {
-            this.closeUserProfile();
-          }}
-        />
-      </Card>
+      <>
+        <Card bodyStyle={{ padding: "0px" }}>
+          {isLoading ? (
+            <Loading />
+          ) : (
+            <>
+              <Table
+                columns={tableColumns}
+                dataSource={customers}
+                rowKey="id"
+              />
+              <UserView
+                data={selectedUser}
+                visible={userProfileVisible}
+                close={() => {
+                  this.closeUserProfile();
+                }}
+              />
+            </>
+          )}
+        </Card>
+      </>
     );
   }
 }
