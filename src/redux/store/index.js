@@ -3,16 +3,20 @@ import reducers from "../reducers";
 import createSagaMiddleware from "redux-saga";
 import rootSaga from "../sagas/index";
 
+import thunk from "redux-thunk";
+
 const sagaMiddleware = createSagaMiddleware();
 
-const middlewares = [sagaMiddleware];
+const middlewares = [sagaMiddleware, thunk];
 
 function configureStore(preloadedState) {
- 
-  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-  const store = createStore(reducers, preloadedState, composeEnhancers(
-    applyMiddleware(...middlewares)
-  ));
+  const composeEnhancers =
+    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+  const store = createStore(
+    reducers,
+    preloadedState,
+    composeEnhancers(applyMiddleware(...middlewares))
+  );
 
   sagaMiddleware.run(rootSaga);
 
@@ -29,4 +33,3 @@ function configureStore(preloadedState) {
 const store = configureStore();
 
 export default store;
-
