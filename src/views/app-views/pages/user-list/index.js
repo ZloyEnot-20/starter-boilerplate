@@ -44,7 +44,7 @@ export class UserList extends Component {
   }
 
   render() {
-    const { users, userProfileVisible, selectedUser } = this.state;
+    const { userProfileVisible, selectedUser } = this.state;
     const { customers, isLoading } = this.props.customers;
     const tableColumns = [
       {
@@ -53,7 +53,7 @@ export class UserList extends Component {
         render: (_, record) => (
           <div className="d-flex">
             <AvatarStatus
-              src={record.img}
+              src={"/img/avatars/thumb-1.jpg"}
               name={record.name}
               subTitle={record.email}
             />
