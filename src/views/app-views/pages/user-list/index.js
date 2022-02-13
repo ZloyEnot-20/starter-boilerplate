@@ -10,6 +10,8 @@ import { connect } from "react-redux";
 import { fetchCustomers } from "redux/reducers/ActionCreators";
 import { customersSlice } from "redux/reducers/CustomersSlice";
 import Loading from "components/shared-components/Loading";
+import { Link } from "react-router-dom";
+import { currentSelectedCustomerSlice } from "redux/reducers/CurrentSelectedCustomerSlice";
 
 export class UserList extends Component {
   state = {
@@ -51,13 +53,18 @@ export class UserList extends Component {
         title: "User",
         dataIndex: "name",
         render: (_, record) => (
-          <div className="d-flex">
-            <AvatarStatus
-              src={"/img/avatars/thumb-1.jpg"}
-              name={record.name}
-              subTitle={record.email}
-            />
-          </div>
+          <Link
+            to={"setting/edit-profile"}
+            onClick={() => this.props.selectCustomer(record)}
+          >
+            <div className="d-flex">
+              <AvatarStatus
+                src={"/img/avatars/thumb-1.jpg"}
+                name={record.name}
+                subTitle={record.email}
+              />
+            </div>
+          </Link>
         ),
         sorter: {
           compare: (a, b) => {
@@ -148,6 +155,8 @@ const mapStateToProps = (state) => ({ customers: state.customers });
 const mapDispatchToProps = (dispatch) => {
   return {
     fetch: () => dispatch(fetchCustomers()),
+    selectCustomer: (customer) =>
+      dispatch(currentSelectedCustomerSlice.actions.selectCustomer(customer)),
     deleteCustomer: (id) => dispatch(customersSlice.actions.removeCustomer(id)),
   };
 };
