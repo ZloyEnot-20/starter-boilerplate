@@ -5,6 +5,10 @@ import moment from "moment";
 import UserView from "./UserView";
 import AvatarStatus from "components/shared-components/AvatarStatus";
 import userData from "assets/data/user-list.data.json";
+import { connect } from "react-redux";
+
+import { fetchCustomers } from "redux/reducers/ActionCreators";
+import { customersSlice } from "redux/reducers/CustomersSlice";
 
 export class UserList extends Component {
   state = {
@@ -14,9 +18,7 @@ export class UserList extends Component {
   };
 
   deleteUser = (userId) => {
-    this.setState({
-      users: this.state.users.filter((item) => item.id !== userId),
-    });
+    this.props.deleteCustomer(userId);
     message.success({ content: `Deleted user ${userId}`, duration: 2 });
   };
 
@@ -34,9 +36,15 @@ export class UserList extends Component {
     });
   };
 
+  componentDidMount() {
+    if (!this.props.customers.customers.length) {
+      this.props.fetch();
+    }
+  }
+
   render() {
     const { users, userProfileVisible, selectedUser } = this.state;
-
+    const { customers, isLoading } = this.props.customers;
     const tableColumns = [
       {
         title: "User",
@@ -59,34 +67,24 @@ export class UserList extends Component {
         },
       },
       {
-        title: "Role",
-        dataIndex: "role",
+        title: "Email",
+        dataIndex: "email",
         sorter: {
-          compare: (a, b) => a.role.length - b.role.length,
+          compare: (a, b) => a.email.length - b.email.length,
         },
       },
       {
-        title: "Last online",
-        dataIndex: "lastOnline",
-        render: (date) => (
-          <span>{moment.unix(date).format("MM/DD/YYYY")} </span>
-        ),
-        sorter: (a, b) =>
-          moment(a.lastOnline).unix() - moment(b.lastOnline).unix(),
+        title: "Phone",
+        dataIndex: "phone",
+
+        sorter: (a, b) => a.phone.lenght - b.phone.length,
       },
       {
-        title: "Status",
-        dataIndex: "status",
-        render: (status) => (
-          <Tag
-            className="text-capitalize"
-            color={status === "active" ? "cyan" : "red"}
-          >
-            {status}
-          </Tag>
-        ),
+        title: "Website",
+        dataIndex: "website",
+        render: (website) => <Tag className="text-capitalize">{website}</Tag>,
         sorter: {
-          compare: (a, b) => a.status.length - b.status.length,
+          compare: (a, b) => a.website.length - b.website.length,
         },
       },
       {
@@ -121,7 +119,7 @@ export class UserList extends Component {
     ];
     return (
       <Card bodyStyle={{ padding: "0px" }}>
-        <Table columns={tableColumns} dataSource={users} rowKey="id" />
+        <Table columns={tableColumns} dataSource={customers} rowKey="id" />
         <UserView
           data={selectedUser}
           visible={userProfileVisible}
@@ -133,5 +131,12 @@ export class UserList extends Component {
     );
   }
 }
+const mapStateToProps = (state) => ({ customers: state.customers });
+const mapDispatchToProps = (dispatch) => {
+  return {
+    fetch: () => dispatch(fetchCustomers()),
+    deleteCustomer: (id) => dispatch(customersSlice.actions.removeCustomer(id)),
+  };
+};
 
-export default UserList;
+export default connect(mapStateToProps, mapDispatchToProps)(UserList);
